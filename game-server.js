@@ -1,9 +1,9 @@
-const game = require(__dirname + "/game-core.js")
+let server = {};
+const game = require(__dirname + "/game-core.js")(server)
 
 module.exports = io => {
     
     //Sever vars
-    let server = {};
 
     server.playerNumbers = [];
     server.clientCount = 0;
@@ -29,7 +29,9 @@ module.exports = io => {
         client.emit("onconnected", {playernumber: client.playernumber, id: client.id});
         io.sockets.emit("playerconnected", {playernumber: client.playernumber, players: client.clientCount})
 
-        server.startRound();
+        if (server.clientCount > 1 && game.status == "waiting")
+            server.startRound();
+        else game.status = "waiting";
 
         //Handle input from client
         client.on("input", data => {
@@ -42,12 +44,22 @@ module.exports = io => {
 
             //Remove player number
             let i = server.playerNumbers.indexOf(client.playernumber);
-            server.playerNumbers.splice(i,1)
+            server.playerNumbers.splice(i,1);
+
+            //Remove rider
+            delete game.riders[client.playernumber];
+
+            //Set the game to waiting if necessary
+            if (server.clientCount < 2) {
+                game.status = "waiting";
+                game.riders = [];
+            }
         });
     });
     
     server.startRound = function () {
 
+        game.status = "active";
         game.riders = {};
         for (let i = 0; i < server.playerNumbers.length; i++) {
             const player = server.playerNumbers[i];
@@ -61,10 +73,9 @@ module.exports = io => {
 
     /**
      * Create update for the clients
-     * @param {array} riders * Array of riders with their light and pos and cool stuff
      */
     server.createUpdate = () => {
-        return {riders: game.riders, players: server.clientCount}
+        return {riders: game.riders, players: server.clientCount, status:game.status}
     }
 
     server.update = () => {

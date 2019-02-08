@@ -34,7 +34,7 @@ function drawRider({x,y,dr}, color) {
  */
 function drawLight(light, pos, color) {
     ctx.strokeStyle = color;
-    ctx.lineWidth = 6;
+    ctx.lineWidth = 5;
     ctx.beginPath();
     let begin = [...light].splice(0,1);
     ctx.moveTo(begin.x, begin.y);
@@ -49,6 +49,13 @@ function draw() {
     ctx.fillStyle = dat_.bg_color;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
+    if (status == "waiting") {
+        ctx.font = "60px Arial";
+        ctx.fillStyle = "grey";
+        ctx.textAlign = "center";
+        ctx.fillText("Waiting for players...", 400, 400);
+    }
+
     for (const i in riders) {
         const rider = riders[i]
         const color = rider_color[i] || "grey";
@@ -57,6 +64,9 @@ function draw() {
     }
 
 }
+
+//this is completely my code and not from https://ourcodeworld.com/articles/read/185/how-to-get-the-pixel-color-from-a-canvas-on-click-or-mouse-event-with-javascript
+const rgbToHex = ([r, g, b]) => "#" + ("000000" + ((r << 16) | (g << 8) | b).toString(16)).slice(-6);
 
 function physics() {
     for (const i in riders) {
@@ -76,6 +86,12 @@ function physics() {
             case 3:
                 rider.pos.x+=spd;
         }
+
+        //Rider inside the walls, he ded, so in pure Tron style we delete him
+        if (rider.pos.x < 0 || rider.pos.x > 800 || rider.pos.y < 0 || rider.pos.y > 800)
+            delete riders[i];
+
+        //Death calculation by light is done server sided only
     }
 
     draw();
