@@ -106,8 +106,8 @@ module.exports = io => {
         }
 
         //Handle afk players
-        for (const id in io.sockets.sockets) {
-            const client = io.sockets.sockets[id];
+        for (const id in server.clients) {
+            const client = server.clients[id];
 
             //Player didn't make any input this round
             if (!this.activeClientsCurrentRound.includes(id)) {
@@ -119,7 +119,7 @@ module.exports = io => {
                     console.log(`Kicking player ${client.playernumber} for being afk.`)
                     client.disconnect();
                 }
-                    
+
             }
         }
     }
@@ -131,7 +131,7 @@ module.exports = io => {
         return {riders: game.riders, players: server.clientCount, status:game.status}
     }
 
-    server.update = () => {
+    server.update = () => {        
         io.sockets.emit("update", server.createUpdate())
     }
 

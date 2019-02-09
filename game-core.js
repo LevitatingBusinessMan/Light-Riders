@@ -62,7 +62,7 @@ module.exports = server => {
 
             //Rider inside the walls, he ded, so in pure Tron style we delete him
             if (rider.pos.x < 0 || rider.pos.x > 800 || rider.pos.y < 0 || rider.pos.y > 800)
-            delete game.riders[i];
+                delete game.riders[i];
 
             //Check ALL lights and see if rider is in them
             //Server side only
@@ -94,7 +94,9 @@ module.exports = server => {
         //Someone won, restart
         if (Object.keys(game.riders).length < 2 && server.clientCount > 1) {
             server.roundEnd();
-            server.startRound();
+            
+            if (game.status == "active") // In case player left/kicked
+                server.startRound();
         }
 
     }
