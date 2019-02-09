@@ -3,7 +3,7 @@ const {width, height} = canvas;
 const ctx = canvas.getContext('2d');
 
 //rider_color lookup table
-const rider_color = [undefined, "cyan","red","green","yellow", "blue", "purple"]
+const rider_color = [undefined, "cyan","red","green","yellow", "orange", "purple"]
 
 //milliseconds per frame to run the physics loop at
 let msfps = 1000/dat_.fps;
@@ -108,33 +108,9 @@ let physicsLoop = setInterval(physics, msfps);
 
 document.onkeydown = e => {
 
-    if (["w","a","s","d","ArrowUp","ArrowLeft","ArrowDown","ArrowRight"].includes(e.key)) {
-        socket.emit("input", {key:e.key});
+    //All input is handled by the server, because of timing issues
 
-/*          //We delay input because for better client prediction
-        if (server_physics_hz)
-            setTimeout(() => {
-                switch (e.key) {
-                    case "w":
-                    case "ArrowUp":
-                        riders[playernumber].pos.dr = 0;
-                        break;
-                    case "a":
-                    case "ArrowLeft":
-                        riders[playernumber].pos.dr = 1;
-                        break;
-                    case "s":
-                    case "ArrowDown":
-                        riders[playernumber].pos.dr = 2;
-                        break;
-                    case "d":
-                    case "ArrowRight":
-                        riders[playernumber].pos.dr = 3;
-                }
-        
-                riders[playernumber].light.push({x:riders[playernumber].pos.x, y:riders[playernumber].pos.y});
-            }, ping*2+(1000/server_physics_hz)+(1000/server_update_hz));
- */
-    }
+    if (["w","a","s","d","ArrowUp","ArrowLeft","ArrowDown","ArrowRight"].includes(e.key))
+        socket.emit("input", {key:e.key});
 
 };

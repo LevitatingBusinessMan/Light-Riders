@@ -9,7 +9,7 @@ const datData = function () {
     this.server_update_hz = "uknown";
     this.server_physics_hz = "uknown";
     this.ping = 0;
-    this.fps = 60;
+    this.fps = 120;
     return this;
 }
 var dat_ = datData();
@@ -35,7 +35,7 @@ var riders,
 
 //Server vars
 var ping = 0,
-    server_update_hz = null;
+    server_update_hz = null,
     server_physics_hz = null;
 
 socket.on("onconnected", data => {
@@ -59,7 +59,14 @@ socket.on("update", data => {
     status = data.status;
 });
 
-socket.on("ping", data => {
-    let ping_ = new Date().getTime() - data.start;
-    ping = dat_.ping = ping_;
-});
+let ping_results = [];
+
+//Calculate ping
+let start;
+setInterval(() => {
+    start = new Date().getTime()
+    socket.emit("ping_") //(ping and pong are reserved)
+}, 500);
+
+//Ping is a direct response on pong
+socket.on("pong_", () => (ping = dat_.ping = (new Date().getTime() - start)/2));

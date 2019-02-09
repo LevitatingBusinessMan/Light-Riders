@@ -39,12 +39,16 @@ module.exports = io => {
 
         if (server.clientCount > 1 && game.status == "waiting")
             server.startRound();
-        else game.status = "waiting";
+        else if (server.clientCount < 2)
+            game.status = "waiting";
+
+        //Receive ping_, emit pong_ (ping and pong are reserved)
+        client.on("ping_", () => client.emit("pong_"));
 
         //Handle input from client
         client.on("input", data => {
             game.inputs.push({key: data.key, playernumber: client.playernumber})
-        })
+        });
 
         client.on("disconnect", () => {
             console.log(`Player ${client.playernumber} disconnected`);
