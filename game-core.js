@@ -105,19 +105,23 @@ module.exports = server => {
         switch (key) {
             case "w":
             case "ArrowUp":
-                game.riders[playernumber].pos.dr = 0;
+                if (game.riders[playernumber].pos.dr !== 2)
+                    game.riders[playernumber].pos.dr = 0;
                 break;
             case "a":
             case "ArrowLeft":
-                game.riders[playernumber].pos.dr = 1;
+                if (game.riders[playernumber].pos.dr !== 3)
+                    game.riders[playernumber].pos.dr = 1;
                 break;
             case "s":
             case "ArrowDown":
-                game.riders[playernumber].pos.dr = 2;
+                if (game.riders[playernumber].pos.dr !== 0)
+                    game.riders[playernumber].pos.dr = 2;
                 break;
             case "d":
             case "ArrowRight":
-                game.riders[playernumber].pos.dr = 3;
+                if (game.riders[playernumber].pos.dr !== 1)
+                    game.riders[playernumber].pos.dr = 3;
         }
 
         game.riders[playernumber].light.push({x:game.riders[playernumber].pos.x, y:game.riders[playernumber].pos.y});
