@@ -5,6 +5,9 @@ const ctx = canvas.getContext('2d');
 //rider_color lookup table
 const rider_color = [undefined, "cyan","red","green","yellow"]
 
+//milliseconds per frame to run the physics loop at
+let msfps = 1000/dat_.fps;
+
 /**
  * 
  * @param {Object} data - x,y and Direction: Value between 0 and 3. (up: 0, left: 1, down: 2, right: 3)
@@ -65,14 +68,11 @@ function draw() {
 
 }
 
-//this is completely my code and not from https://ourcodeworld.com/articles/read/185/how-to-get-the-pixel-color-from-a-canvas-on-click-or-mouse-event-with-javascript
-const rgbToHex = ([r, g, b]) => "#" + ("000000" + ((r << 16) | (g << 8) | b).toString(16)).slice(-6);
-
 function physics() {
     for (const i in riders) {
         const rider = riders[i];
         
-        let spd = 2;
+        let spd = (0.12) * msfps;
         switch (rider.pos.dr) {
             case 0:
                 rider.pos.y-=spd;
@@ -94,11 +94,17 @@ function physics() {
         //Death calculation by light is done server sided only
     }
 
+    //The user can change the fps at runtime, so we need to update it
+    if (msfps !== 1000/dat_.fps) {
+        msfps = 1000/dat_.fps;
+        clearInterval(physicsLoop);
+        physicsLoop = setInterval(physics, msfps);
+    }
+
     draw();
 }
 
-//Physics loop at 30 fps
-setInterval(physics, 1000/60);
+let physicsLoop = setInterval(physics, msfps);
 
 document.onkeydown = e => {
 

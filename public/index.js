@@ -7,7 +7,7 @@ const datData = function () {
     this.status = "uknown";
     this.bg_color = " #336699";
     this.ping = 0;
-    this.fps = 0;
+    this.fps = 60;
     return this;
 }
 var dat_ = datData();
@@ -21,7 +21,7 @@ window.onload = () => {
     gui.add(dat_, "status").listen();
     gui.add(dat_, "bg_color");
     gui.add(dat_, "ping").listen();
-    gui.add(dat_, "fps").listen();
+    gui.add(dat_, "fps");
 };
 
 //Game vars

@@ -1,3 +1,6 @@
+//Most of the code here is exactly the same as the client code. With the biggest difference that the client doesn't do collision calculations.
+//Also note that the server code has all vars attached to the "game" object for access by the game-server
+
 module.exports = server => {
     
     //Game vars
@@ -5,6 +8,9 @@ module.exports = server => {
 
     game.riders = {};
     game.inputs =[];
+
+    //Physics loop at 30 fps
+    game.msfps = 1000/30;
 
     //Generate starting position
     game.generatePos = () => {
@@ -39,7 +45,7 @@ module.exports = server => {
         for (const i in game.riders) {
             const rider = game.riders[i];
 
-            let spd = 2;
+            let spd = (0.12) * game.msfps;
             switch (rider.pos.dr) {
                 case 0:
                     rider.pos.y-=spd;
@@ -117,8 +123,7 @@ module.exports = server => {
         game.riders[playernumber].light.push({x:game.riders[playernumber].pos.x, y:game.riders[playernumber].pos.y});
     }
 
-    //Physics loop at 30 fps
-    setInterval(game.physics, 1000/60)
+    setInterval(game.physics, game.msfps)
 
     return game;
 };

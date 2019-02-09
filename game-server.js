@@ -82,7 +82,7 @@ module.exports = io => {
         io.sockets.emit("update", server.createUpdate())
     }
 
-    //Server update at 15hz
-    setInterval(server.update, 1000/15)
+    //Server update at 10hz
+    setInterval(server.update, 1000/10)
 }
 
