@@ -1,5 +1,7 @@
 let server = {};
+server.config = require(__dirname + "/config/config.js")
 const game = require(__dirname + "/game-core.js")(server)
+
 
 module.exports = io => {
     
@@ -26,7 +28,13 @@ module.exports = io => {
         }
         
         //Tell the client it's connected and give it it's player number
-        client.emit("onconnected", {playernumber: client.playernumber, id: client.id});
+        client.emit("onconnected", {
+            playernumber: client.playernumber,
+            id: client.id,
+            server_update_hz: server.config.server_update,
+            server_physics_hz: server.config.server_physics
+        });
+
         io.sockets.emit("playerconnected", {playernumber: client.playernumber, players: client.clientCount})
 
         if (server.clientCount > 1 && game.status == "waiting")
@@ -57,6 +65,9 @@ module.exports = io => {
         });
     });
     
+    //Send ping signal every second
+    setInterval(() => io.sockets.emit("ping", {start: new Date().getTime()}), 1000);
+
     server.startRound = function () {
 
         game.status = "active";
@@ -82,7 +93,7 @@ module.exports = io => {
         io.sockets.emit("update", server.createUpdate())
     }
 
-    //Server update at 10hz
-    setInterval(server.update, 1000/10)
+    //Server update at 30hz (default)
+    setInterval(server.update, 1000/server.config.server_update)
 }
 

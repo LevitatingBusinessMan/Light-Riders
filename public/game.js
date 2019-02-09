@@ -3,7 +3,7 @@ const {width, height} = canvas;
 const ctx = canvas.getContext('2d');
 
 //rider_color lookup table
-const rider_color = [undefined, "cyan","red","green","yellow"]
+const rider_color = [undefined, "cyan","red","green","yellow", "blue", "purple"]
 
 //milliseconds per frame to run the physics loop at
 let msfps = 1000/dat_.fps;
@@ -72,7 +72,7 @@ function physics() {
     for (const i in riders) {
         const rider = riders[i];
         
-        let spd = (0.12) * msfps;
+        let spd = (0.18) * msfps;
         switch (rider.pos.dr) {
             case 0:
                 rider.pos.y-=spd;
@@ -109,26 +109,32 @@ let physicsLoop = setInterval(physics, msfps);
 document.onkeydown = e => {
 
     if (["w","a","s","d","ArrowUp","ArrowLeft","ArrowDown","ArrowRight"].includes(e.key)) {
-        switch (e.key) {
-            case "w":
-            case "ArrowUp":
-                riders[playernumber].pos.dr = 0;
-                break;
-            case "a":
-            case "ArrowLeft":
-                riders[playernumber].pos.dr = 1;
-                break;
-            case "s":
-            case "ArrowDown":
-                riders[playernumber].pos.dr = 2;
-                break;
-            case "d":
-            case "ArrowRight":
-                riders[playernumber].pos.dr = 3;
-        }
+        socket.emit("input", {key:e.key});
 
-        riders[playernumber].light.push({x:riders[playernumber].pos.x, y:riders[playernumber].pos.y});
-        socket.emit("input", {key:e.key})
+/*          //We delay input because for better client prediction
+        if (server_physics_hz)
+            setTimeout(() => {
+                switch (e.key) {
+                    case "w":
+                    case "ArrowUp":
+                        riders[playernumber].pos.dr = 0;
+                        break;
+                    case "a":
+                    case "ArrowLeft":
+                        riders[playernumber].pos.dr = 1;
+                        break;
+                    case "s":
+                    case "ArrowDown":
+                        riders[playernumber].pos.dr = 2;
+                        break;
+                    case "d":
+                    case "ArrowRight":
+                        riders[playernumber].pos.dr = 3;
+                }
+        
+                riders[playernumber].light.push({x:riders[playernumber].pos.x, y:riders[playernumber].pos.y});
+            }, ping*2+(1000/server_physics_hz)+(1000/server_update_hz));
+ */
     }
 
 };

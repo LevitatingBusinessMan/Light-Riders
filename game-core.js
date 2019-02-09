@@ -9,8 +9,8 @@ module.exports = server => {
     game.riders = {};
     game.inputs =[];
 
-    //Physics loop at 30 fps
-    game.msfps = 1000/30;
+    //Physics loop at 45 fps (default)
+    game.msfps = 1000/server.config.server_physics;
 
     //Generate starting position
     game.generatePos = () => {
@@ -45,7 +45,7 @@ module.exports = server => {
         for (const i in game.riders) {
             const rider = game.riders[i];
 
-            let spd = (0.12) * game.msfps;
+            let spd = (0.18) * game.msfps;
             switch (rider.pos.dr) {
                 case 0:
                     rider.pos.y-=spd;
