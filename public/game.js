@@ -3,7 +3,7 @@ const {width, height} = canvas;
 const ctx = canvas.getContext('2d');
 
 //rider_color lookup table
-const rider_color = [undefined, "cyan","red","green","yellow", "orange", "purple"]
+const rider_color = [undefined, "cyan","red","green","yellow", "purple", "orange"]
 
 //milliseconds per frame to run the physics loop at
 let msfps = 1000/dat_.fps;
@@ -52,7 +52,13 @@ function draw() {
     ctx.fillStyle = dat_.bg_color;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
-    if (status == "waiting") {
+    if (!connected) {
+        ctx.font = "60px Arial";
+        ctx.fillStyle = "grey";
+        ctx.textAlign = "center";
+        ctx.fillText("Disconnected.", 400, 400);
+    }
+    else if (status == "waiting") {
         ctx.font = "60px Arial";
         ctx.fillStyle = "grey";
         ctx.textAlign = "center";

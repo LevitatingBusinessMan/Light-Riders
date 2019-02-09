@@ -1,5 +1,5 @@
 module.exports = {
     "port": 3000,
-    "server_update": 120, //Server update loop speed (hz)
+    "server_update": 120, //Server update loop speed (hz) (tickrate)
     "server_physics": 200 //Game physics update loop speed (hz)
 }

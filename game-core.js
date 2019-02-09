@@ -9,7 +9,7 @@ module.exports = server => {
     game.riders = {};
     game.inputs =[];
 
-    //Physics loop at 45 fps (default)
+    //Physics loop at 200fps (default)
     game.msfps = 1000/server.config.server_physics;
 
     //Generate starting position
@@ -93,6 +93,7 @@ module.exports = server => {
 
         //Someone won, restart
         if (Object.keys(game.riders).length < 2 && server.clientCount > 1) {
+            server.roundEnd();
             server.startRound();
         }
 

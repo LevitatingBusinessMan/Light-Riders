@@ -5,7 +5,7 @@ const datData = function () {
     this.playernumber = "none";
     this.players = "uknown";
     this.status = "uknown";
-    this.bg_color = " #000000";
+    this.bg_color = "#000000";
     this.server_update_hz = "uknown";
     this.server_physics_hz = "uknown";
     this.ping = 0;
@@ -35,22 +35,34 @@ var riders,
 
 //Server vars
 var ping = 0,
-    server_update_hz = null,
-    server_physics_hz = null;
+    connected = false,
+    server_update_hz = 0,
+    server_physics_hz = 0;
 
 socket.on("onconnected", data => {
-    dat_.connected = true;
+    connected = dat_.connected = true;
     dat_.playernumber = playernumber = data.playernumber;
     dat_.socket = data.id;
     server_update_hz = dat_.server_update_hz = data.server_update_hz;
     server_physics_hz = dat_.server_physics_hz = data.server_physics_hz;
-    console.log("Connected with server. Socket id: " + data.id);
+    addToLog("Connected!");
 });
 
-//Disconnected reset dat_?
+socket.on("playerconnected", ({player}) => {
+    if (player !== playernumber)
+        addToLog(`Player ${player} (${rider_color[player]}) connected`);
+});
 
-socket.on("playerconnected", data => {
-    //alert(`Player ${data.playernumber} connected!`);
+socket.on("playerdisconnected",  ({player}) => {
+    addToLog(`Player ${player} (${rider_color[player]}) disconnected`);
+});
+
+socket.on("afk", ({player}) => {
+    addToLog(`Kicked: player ${player} (${rider_color[player]}) for being afk`);
+});
+
+socket.on("won", ({player}) => {
+    addToLog(`Player ${player} (${rider_color[player]}) won that round!`);
 });
 
 socket.on("update", data => {
@@ -58,6 +70,12 @@ socket.on("update", data => {
     dat_.players = data.players;
     status = data.status;
 });
+
+socket.on("disconnect", () => {
+    addToLog(`Disconnected!`);
+    dat_ = datData();
+    riders = [];
+})
 
 let ping_results = [];
 
@@ -70,3 +88,12 @@ setInterval(() => {
 
 //Ping is a direct response on pong
 socket.on("pong_", () => (ping = dat_.ping = (new Date().getTime() - start)/2));
+
+//Log stuff
+function addToLog(msg) {
+    console.log(msg)
+    let Log = document.getElementById("log");
+    let log_ = document.createElement("DIV");
+    log_.innerHTML = msg;
+    Log.appendChild(log_)
+}
